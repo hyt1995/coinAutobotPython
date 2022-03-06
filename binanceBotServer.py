@@ -1,4 +1,5 @@
 #-*-coding:utf-8 -*-
+from tokenize import Number
 import ccxt
 import time
 import pandas as pd
@@ -172,10 +173,9 @@ def GetAmount(usd, coin_price, rate):
 
     amout = target/coin_price
 
-    if amout < 0.001:
-        amout = 0.001
+    if amout < 0.0001:
+        amout = 0.0001
 
-    #print("amout", amout)
     return amout
 
 
@@ -313,26 +313,50 @@ coinPrice = GetCoinNowPrice(binanceCon, TargetCoinTicker)
 
 #레버리지에 따른 최대 매수 가능 수량
 #  이렇게 40%만 설정을 해놓는 이유는 이더리움반 비트코인 반 등 나눠서 매매를 하기 위한것이다.
-Max_Amount = round(GetAmount(float(balance['USDT']['total']),coinPrice,1.0),3) * leverage 
+# Max_Amount = round(GetAmount(float(balance['USDT']['total']),coinPrice,1.0),4) * leverage
+Max_Amount = GetAmount(float(balance['USDT']['total']),coinPrice,1.0) * leverage 
+
+# 특정 소수점 내림 구현하기
+first = str(Max_Amount).split("0")
+
+for int in first:
+    print("하나하나 출력", int)
+    if int and int != ".":
+        sec = str(Max_Amount).split(int)
+        print(sec)
+
+        thir = sec[0] + int
+        print(thir)
+
+        Max_Amount = float(thir)
+        print("~~~~~~~~~~~",first)
+
+        break
+
+
+print("현재 내가 매수가능한 수량 : ",  Max_Amount)
+
 
 #최대 매수수량의 1%에 해당하는 수량을 구한다.
 one_percent_amount = Max_Amount / 100.0 
 
 print("최대 매수 가능 수량의 1% :  ", one_percent_amount) 
 
-#첫 매수 비중을 구한다..
+# 첫 매수 비중을 구한다..
 # 근데 나는 첫 매수를 100%로 할꺼다 시드 머니가 작으니까
 firstAmount = one_percent_amount * 100.0
 
-if firstAmount < 0.001:
-    firstAmount = 0.001
+if firstAmount < 0.0001:
+    firstAmount = 0.0001
+else:
+    firstAmount = round(firstAmount,4)
 
 print("첫 매수할 양 : ", firstAmount) 
 
 
 #음수를 제거한 절대값 수량 ex -0.1 -> 0.1 로 바꿔준다.
 absAmt = abs(amt)
-print("현재 내가 매수한 양 : ", absAmt)
+print("현재 내가 매수한 양 : ", amt)
 
 #타겟 레이트 0.001 
 target_rate = 0.001
@@ -341,7 +365,7 @@ target_revenue_rate = target_rate * 100.0
 
 #스탑로스 비율을 설정합니다. 0.5면 50% 0.1이면 10%입니다.
 #이 것도 물타기 비율 처럼 매수 비중에 따라 조절할 수도 있겠죠?
-StopLossRate = 0.02
+StopLossRate = 0.05
 
 # 0이면 포지션 잡기전
 # 포지션을 잡아 수익을 만들 로직
@@ -352,7 +376,7 @@ if amt == 0:
     if ma5 < ma20:
         print("20일선 밑에서 처음 롱을 잡기 위한")
         # if rsi7 <= 36.0 and rsi14 <= 36.0 and rsi24 <= 40.0 and rsi7 < rsi14 and rsi14 < rsi24:
-        if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi14 <= 55.0:
+        if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi14 <= 60.0:
             print("롱으로 매수 ")
 
             #주문 취소후
@@ -412,12 +436,12 @@ else:
             #스탑 로스 설정을 건다.
             SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
 
-    else:
+    elif ma5 < ma20:
         print("20일선 밑에서 현재 코인을 팔기 위한")
 
         # rsi7 < rsi14 < rsi24 and ma
         # if rsi7 < rsi14 and rsi14 < rsi24 and ma5Before2> ma5:
-        if ma5Before3 > ma5Before2 and ma5Before2 > ma5 and rsi14 < 50.0:
+        if ma5Before3 > ma5Before2 and ma5Before2 > ma5 and rsi14 < 34.0:
             print("매수한 코인 매도")
 
             #주문 취소후
