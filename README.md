@@ -22,4 +22,8 @@ type - Stop Market로 스탑로스 주문이 들어간것을 확인이 가능하
 
 
 
-autoServer 접속 방법 - ssh -i "botServerKey001.pem" ec2-user@ec2-54-226-206-18.compute-1.amazonaws.com
+autoServer 접속 방법 - 
+
+chmod 400 botServerKey001.pem
+
+ssh -i "botServerKey001.pem" ec2-user@ec2-54-226-206-18.compute-1.amazonaws.com

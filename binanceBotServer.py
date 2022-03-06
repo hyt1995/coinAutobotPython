@@ -203,26 +203,6 @@ def ExistOrderSide(binance,Ticker,Side):
 #3분을 기준으로 한 캔들 정보 가져온다
 df3 = GetOhlcv(binanceCon,TargetCoinTicker, '3m')
 
-#최근 3분의 종가 데이터
-#최근 3개의 종가 데이터
-print("Price: ",df3['close'][-3], "->",df3['close'][-2], "->",df3['close'][-1] )
-
-#최근 3개의 5일선 데이터
-print("5ma: ",GetMA(df3, 5, -3), "->",GetMA(df3, 5, -2), "->",GetMA(df3, 5, -1))
-
-#최근 3개의 20일선 데이터
-print("20ma: ",GetMA(df3, 20, -3), "->",GetMA(df3, 20, -2), "->",GetMA(df3, 20, -1))
-
-
-#최근 3개의 RSI7 데이터
-print("RSI7: ",GetMA(df3, 7, -3), "->",GetMA(df3, 7, -2), "->",GetMA(df3, 7, -1))
-
-#최근 3개의 RSI14 데이터
-print("RSI14: ",GetMA(df3, 14, -3), "->",GetMA(df3, 14, -2), "->",GetMA(df3, 14, -1))
-
-#최근 3개의 RSI24 데이터
-print("RSI24: ",GetMA(df3, 24, -3), "->",GetMA(df3, 24, -2), "->",GetMA(df3, 24, -1))
-
 
 #최근 5일선 3개를 가지고 와서 변수에 넣어준다.
 ma5Before3 = GetMA(df3, 5, -4)
@@ -230,6 +210,8 @@ ma5Before2 = GetMA(df3, 5, -3)
 ma5 = GetMA(df3, 5, -2)
 
 #20일선을 가지고 와서 변수에 넣어준다.
+ma20Before3 = GetMA(df3, 20, -4)
+ma20Before2 = GetMA(df3, 20, -3)
 ma20 = GetMA(df3, 20, -2)
 
 #RSI7 정보를 가지고 온다.
@@ -238,6 +220,28 @@ rsi7 = GetRSI(df3, 7, -1)
 rsi14 = GetRSI(df3, 14, -1)
 #RSI24 정보를 가지고 온다.
 rsi24 = GetRSI(df3, 24, -1)
+
+
+
+#최근 3분의 종가 데이터
+#최근 3개의 종가 데이터
+print("Price: ",df3['close'][-3], "->",df3['close'][-2], "->",df3['close'][-1] )
+
+#최근 3개의 5일선 데이터
+print("5ma: ",ma5Before3, "->",ma5Before2, "->",ma5)
+
+#최근 3개의 20일선 데이터
+print("20ma: ",ma20Before3, "->",ma20Before2, "->",ma20)
+
+
+#최근 3개의 RSI7 데이터
+print("RSI7: ", rsi7)
+
+#최근 3개의 RSI14 데이터
+print("RSI14: ", rsi14)
+
+#최근 3개의 RSI24 데이터
+print("RSI24: ", rsi24)
 
 #잔고 데이타 가져오기 
 balance = binanceCon.fetch_balance(params={"type": "future"})
@@ -339,7 +343,7 @@ StopLossRate = 0.1
 # 우선 밑에서 사서 올랐을때 파는 전략부터 구현을 하도록 하겠습니다.
 if ma5 < ma20:
     print("20일선 밑에서 진행")
-    if rsi7 <= 35.0 and rsi14 <= 35.0 and rsi24 <= 40.0 and rsi7 < rsi14 and rsi14 < rsi24:
+    if rsi7 <= 37.0 and rsi14 <= 37.0 and rsi24 <= 40.0 and rsi7 < rsi14 and rsi14 < rsi24:
         print("매수 진행")
 
         #주문 취소후
