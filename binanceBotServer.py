@@ -364,8 +364,7 @@ target_revenue_rate = target_rate * 100.0
 #이 것도 물타기 비율 처럼 매수 비중에 따라 조절할 수도 있겠죠?
 StopLossRate = 0.02
 
-# 0이면 포지션 잡기전
-# 포지션을 잡아 수익을 만들 로직
+############################## 0이면 포지션 잡기전
 if amt == 0:
     print("---------------------------------기존 주문없이 매수 진행---------------------------------")
 
@@ -374,7 +373,7 @@ if amt == 0:
         print("20일선 밑에서 처음 롱을 잡기 위한")
 
         if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi7> rsi14 :
-            print("롱으로 매수 ")
+            print("20일선 밑에서 5일선이 위로 꺾이고 rsi7가 rsi14보다 클때 롱을 잡는다.")
 
             #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
@@ -395,9 +394,8 @@ if amt == 0:
     elif ma5 > ma20:
         print("20일선 위에서 처음 숏을 잡기 위한")
 
-        # 5일선이 밑으로 꺾였는데 rsi7이 rsi14보다 작으면 주문이 있는경우 5일선이 다시 꺾여도 숏을 잡지 않는다.
         if  ma5Before3 < ma5Before2 and ma5Before2 > ma5 and rsi7 < rsi14:
-            print("숏을 잡는다.")
+            print("20일선 위에서 5일선이 아래로 꺾이고 rsi7이 rsi14보다 작을때 숏을 잡는다.")
 
             #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
@@ -407,20 +405,19 @@ if amt == 0:
 
             #스탑 로스 설정을 건다.
             SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
+
+##############################기존에 매수한 금액이있을 경우
 else:
-    # 기존에 매수한 금액이있을 경우 
+
     if ma5 > ma20:
         print("20일선 위에서 현재 코인을 팔기 위한")
         
         if ma5Before3 < ma5Before2 and ma5Before2 > ma5 and rsi14 >= 40.0:
-            print("매도 진행")
+            print("20일선 위에서 5일선이 아래로 꺾였을때 rsi14가 40보다 같거나 크면 판다")
 
             #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
             time.sleep(0.1)
-
-            #해당 코인 가격을 가져온다.
-            # coin_price = GetCoinNowPrice(binanceCon, TargetCoinTicker)
 
             #시장가 숏 포지션 잡기 - 매도가 곧 숏 포지션 잡는 것
             print("매도 진행",binanceCon.create_market_sell_order(TargetCoinTicker, absAmt))
@@ -428,8 +425,10 @@ else:
     elif ma5 < ma20:
         print("20일선 밑에서 현재 코인을 팔기 위한")
 
-        if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi14 >= 35.0:
-            print("매수한 코인 매도")
+        if ma5Before3 > ma5Before2 and ma5Before2 > ma5 and rsi14 <= 40.0:
+            # 파는건 좋은데 너무 빨리 팔아서 수익이 안나온다. 
+            # 대부분 20일선 밑으로 내려가자마자 바로 판다.
+            print("20일선 밑에서 5일선이 위로 꺾이고 rsi14가 40보다 작을때 판다")
 
             #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
@@ -439,24 +438,69 @@ else:
             StopLossRate = 0.01
 
             # 숏포지션에서 5일선이 다시 상승세일때 팔면서 롱포시젼도 같이 잡기
-            if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi7> rsi14 :
-                #시장가 롱포지션으로 기존 코인 처분
-                print("매도 진행 + 롱포지션 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt + firstAmount ))
+            # if rsi7 > rsi14 :
+            #     #시장가 롱포지션으로 기존 코인 처분
+            #     print("매도 진행 + 롱포지션 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt + firstAmount ))
 
-                SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
+            #     SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
 
             #시장가 롱포지션으로 기존 코인 처분
             print("매도 진행 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt))
 
-    # print("롱으로 매수인데 5일선이 밑으로 꺾이면서 20일선하고 만나면 자동으로 숏으로 바뀌게")
-    # print("숏으로 매수인데 5일이 위로 꺾이면서 20일선하고 만나면 자동으로 롱으로 매수")
-    # elif  5일선이 위든 아래든 amt if 문을 걸어 -면 롱으로 모두 매도  아니면 숏으로 모두 매수가 필요함
-    if ma5Before2 > ma20 and ma5 < ma20: # 5일선이 위에 있다 20일선 아래로 겹칠 때
+        if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi7> rsi14 :
+
+            print("20일선 밑에서 5일선이 위로 꺾였을때 rsi7이 rsi14보다 크면 매도 + 롱포지션")
+
+            #주문 취소후
+            binanceCon.cancel_all_orders(TargetCoinTicker)
+            time.sleep(0.1)
+
+            # 스탑로스를 1%로 잡는다.
+            StopLossRate = 0.01
+
+            #시장가 롱포지션으로 기존 코인 처분
+            print("매도 진행 + 롱포지션 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt + firstAmount ))
+
+            SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
+
+
+
+
+
+
+    # 팔지않고 20일선으로 교차될때 발생
+    if ma5Before2 >= ma20 and ma5 < ma20: # 5일선이 위에 있다 20일선 아래로 겹칠 때
         if amt > 0:
+
+            print("포지션이 롱인 상태에서 20일선 밑으로 갈때")
+
+             #주문 취소후
+            binanceCon.cancel_all_orders(TargetCoinTicker)
+            time.sleep(0.1)
+
+            # 스탑로스를 1%로 잡는다.
+            StopLossRate = 0.01
+
             print("롱에서 숏 잡기",binanceCon.create_market_sell_order(TargetCoinTicker, absAmt))
-    elif ma20Before2 < ma20 and ma5 > ma20: # 5일선이 아래에 있다 20일선 위로 갈 때
+
+            SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
+
+
+    elif ma20Before2 < ma20 and ma5 > ma20: 
         if amt < 0:
+
+            print("포지션이 숏인데 20일선 위로 갈때")
+
+            #주문 취소후
+            binanceCon.cancel_all_orders(TargetCoinTicker)
+            time.sleep(0.1)
+
+            # 스탑로스를 1%로 잡는다.
+            StopLossRate = 0.01
+
             print("숏에서 롱잡기 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt))
+
+            SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
 
 if amt != 0: #포지션이 있을때만 스탑로스를 건다
     SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
