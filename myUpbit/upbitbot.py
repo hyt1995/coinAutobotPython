@@ -1,6 +1,5 @@
 from audioop import reverse
 import time
-from dbus import IntrospectionParserException
 import pyupbit
 import pandas as pd
 import ende_key
@@ -221,7 +220,7 @@ print("현재 내 매매한 코인 개수를 알아보기위한", balances)
 MaxCoinCnt = 2
 
 #처음 매수할 비중(퍼센트) 
-FirstRate = 100.0
+FirstRate = 30.0
 #추가 매수할 비중 (퍼센트) 
 WaterRate = 5.0
 
@@ -237,7 +236,7 @@ TotalRevenue = (TotalRealMoney - TotalMoeny) * 100.0/ TotalMoeny
 CoinMaxMoney = TotalMoeny / MaxCoinCnt
 
 #처음에 매수할 금액 
-FirstEnterMoney = CoinMaxMoney / 30.0 * FirstRate - selectSale
+FirstEnterMoney = (CoinMaxMoney / 100.0 * FirstRate) - selectSale
 
 #그 이후 매수할 금액 - 즉 물 탈 금액 
 WaterEnterMoeny = CoinMaxMoney / 100.0 * WaterRate
