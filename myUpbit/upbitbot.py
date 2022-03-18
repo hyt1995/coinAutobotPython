@@ -5,6 +5,7 @@ import pandas as pd
 import ende_key
 import my_key
 import numpy
+import datetime as dt
 
 
 
@@ -66,18 +67,21 @@ def GetTopCoinList(interval, top):
         
     #코인 거래량 순서대로 줄세우기 정렬
     dicSortedCoinMoney = sorted(dicCoinMoney.items(), key = lambda x : x[1], reverse=True)
+    
 
     coinList = list()
 
-    cnt = 0
-
     for coinData in dicSortedCoinMoney:
-        cnt += 1
 
-        if cnt <= top:
+    #코인 금액 3000이상, 최소 1달이상코인 
+
+        if pyupbit.get_current_price(coinData[0]) >= 3000 and len(pyupbit.get_ohlcv(coinData[0],count=3, interval="month")) >= 3 and len(coinList) <= top:
+
             coinList.append(coinData[0])
-        else : 
+
+        elif len(coinList) >= top : 
             break
+
 
     return coinList
 
@@ -188,9 +192,17 @@ def GetHasCoinCnt(balances):
 #암복호화 클래스 객체를 미리 생성한 키를 받아 생성한다.
 simpleEnDecrypt = my_key.SimpleEnDecrypt(ende_key.ende_key)
 
+
+
+#### 실서버 운영을 위한
 #암호화된 액세스키와 시크릿키를 읽어 복호화 한다.
 Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.upbit_access)
 Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.upbit_secret)
+
+######로컬에서 테스트를 위한
+#암호화된 액세스키와 시크릿키를 읽어 복호화 한다.
+# Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.local_upbit_access)
+# Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.local_upbit_secret)
 
 # 업비트 객체 생성
 upbit = pyupbit.Upbit(Upbit_AccessKey, Upbit_ScretKey)
@@ -212,15 +224,15 @@ LovelyCoinList = ['KRW-BTC','KRW-ETH']
 # 내가 가진 잔고 데이터 가져오기
 balances = upbit.get_balances()
 
-print("현재 내 매매한 코인 개수를 알아보기위한", balances)
-
 # Tickers = pyupbit.get_tickers("KRW")
+#거래대금이 많은 탑코인 , 코인 금액 3000이상, 최소 1달이상코인
+# TopCoinList = GetTopCoinList("day",5)
 
 #내가 매수할 총 코인 개수
 MaxCoinCnt = 2
 
 #처음 매수할 비중(퍼센트) 
-FirstRate = 30.0
+FirstRate = 100.0
 #추가 매수할 비중 (퍼센트) 
 WaterRate = 5.0
 
@@ -253,22 +265,17 @@ print ("지정 매도가를 위한 1% 금액 : ", selectSale)
 
 
 #ex) TopCoinList = GetTopCoinList("minute10",30) <- 최근 10여분 동안 거래대금이 많은 코인 30개를 리스트로 리턴
-# TopCoinList = GetTopCoinList("day",10)
+TopCoinList = GetTopCoinList("day",5)
+time.sleep(0.05)
 
-# Tickers = pyupbit.get_tickers("KRW")
-# print("티커 확인해서 지정주문을 위한 ::::", Tickers)
-
-revenu_rate = GetRevenueRate(balances, 'KRW-BTC')
-print("현재 내 수익율 가져오기 :::: ", revenu_rate)
+print("매수/매도 돌릴 코인 리스트 ::::::: ", TopCoinList)
 
 booleanFor = True
 
 if booleanFor == True:
 
 
-
-
-    for ticker in LovelyCoinList:
+    for ticker in TopCoinList:
         try:
 
             #보유하고 있는 코인들 즉 매수 상태인 코인들
@@ -276,23 +283,24 @@ if booleanFor == True:
 
                 print("---------------------코인 매수 상태--------------------------------------------------------------")
 
-                print("내가 매입한 코인가격에서 -1%밑으로 떨어지면 매도 하고 다시 기회를 노린다. !!!!!!!!!!!!!!!!!")
                 balances = upbit.get_balances()
 
-                #스탑로스를 위한
                 for value in balances:
+                    
                     if ticker == value['unit_currency'] + "-" + value['currency']:
 
+                        print("내가 매입한 코인가격에서 -1%밑으로 떨어지면 매도 하고 다시 기회를 노린다. !!!!!!!!!!!!!!!!!")
                         if pyupbit.get_current_price(ticker) <= float(value["avg_buy_price"])*0.99:
 
                             revenu_rate = GetRevenueRate(balances, ticker)
                             print("현재 내 수익율 가져오기 :::: ", revenu_rate)
-                            print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,value["balance"]))
-                            time.sleep(0.05)
+                            print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
+                            time.sleep()
+
+                            #스탑로스 끝나고 여기서 바로 매수 하면 똑같은 손실만 일어날뿐 여기서 함수자체를 종료를 시켜야하나?
 
 
-
-                # rsi14가 70이상이면 매도를 진행한다.######################################
+                # rsi7이 70이상이면 매도를 진행한다.######################################
                 NowCoinTotalMoney = GetCoinNowMoney(balances,ticker)
                 print("매수된 코인 중 현재 내 코인 평가 금액 :::", NowCoinTotalMoney)   
 
@@ -301,17 +309,15 @@ if booleanFor == True:
                 print("할당된 최대코인매수금액 대비 매수된 코인 비율  :::", Total_Rate)
 
                 #분봉을 가져온다.
-                df_15 = pyupbit.get_ohlcv(ticker, interval="minute15")
-                rsi14 = GetRSI(df_15, 14, -1)
-                rsi14_1 = GetRSI(df_15, 14, -2)
-                rsi14_2 = GetRSI(df_15, 14, -3)
-                print(ticker , ", rsi14 :", rsi14, " -> ", "rsi14_1 :: ", rsi14_1)
+                df_5 = pyupbit.get_ohlcv(ticker, interval="minute5")
+                rsi7_1 = GetRSI(df_5, 7, -2)
+                print(ticker , ", rsi7_1 :", rsi7_1)
 
 
-                #15분봉 기준 RSI지표 70이상일때 매도
+                #5분봉 기준 RSI지표 70이상일때 매도
                 # if rsi14_2 >= 70 and rsi14_2 > rsi14_1 :
-                if rsi14_1>= 70.0:
-                    print("바로 전 rsi14가 70이상 매도 진행 ::::", upbit.sell_market_order(ticker,value["balance"]))
+                if rsi7_1>= 70.0:
+                    print("바로 전 rsi7이 70이상 매도 진행 ::::", upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                     break
 
                     #할당된 최대코인매수금액 대비 매수된 코인 비중이 50%이하일때..
@@ -328,11 +334,11 @@ if booleanFor == True:
             else:
                 print("-----------------------------------현재 매수된 코인이 없을 경우---------------------------------------------------------------------")
                 #분봉을 가져온다.
-                df_15 = pyupbit.get_ohlcv(ticker, interval="minute15")
-                rsi7 = GetRSI(df_15, 7, -2)
-                print(ticker , ", rsi7 :", rsi7)
+                df5 = pyupbit.get_ohlcv(ticker, interval="minute5")
+                rsi7_1 = GetRSI(df5, 7, -2)
+                print(ticker , ", rsi7 :", rsi7_1)
                 
-                if rsi7 <= 30:
+                if rsi7_1 <= 30:
                     
                     print(upbit.buy_market_order(ticker,FirstEnterMoney))
                     print("현재 rsi지수가 30보다 같거나 작을때 코인 :", ticker, "매수",FirstEnterMoney,"가격으로 매수")
