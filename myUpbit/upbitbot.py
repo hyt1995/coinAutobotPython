@@ -263,16 +263,17 @@ print ("FirstEnterMoney : ", FirstEnterMoney)
 print ("WaterEnterMoeny : ", WaterEnterMoeny)
 print ("지정 매도가를 위한 1% 금액 : ", selectSale)
 
-
-#ex) TopCoinList = GetTopCoinList("minute10",30) <- 최근 10여분 동안 거래대금이 많은 코인 30개를 리스트로 리턴
 TopCoinList = GetTopCoinList("day",5)
-time.sleep(0.05)
-
-print("매수/매도 돌릴 코인 리스트 ::::::: ", TopCoinList)
 
 booleanFor = True
 
 if booleanFor == True:
+
+    #이 두개는 항상 추가하고 돌린다. - 그나마 정상적인 기회가 많다.
+    TopCoinList.append("KRW-BTC")
+    TopCoinList.append("KRW-ETH")
+
+    print("매수/매도 돌릴 코인 리스트 ::::::: ", TopCoinList)
 
 
     for ticker in TopCoinList:
@@ -295,21 +296,25 @@ if booleanFor == True:
                             revenu_rate = GetRevenueRate(balances, ticker)
                             print("현재 내 수익율 가져오기 :::: ", revenu_rate)
                             print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
-                            time.sleep()
+                            time.sleep(0.5)
 
-                            #스탑로스 끝나고 여기서 바로 매수 하면 똑같은 손실만 일어날뿐 여기서 함수자체를 종료를 시켜야하나?
+                            #스탑로스 끝나고 여기서 바로 매수 하면 똑같은 손실만 일어날뿐 여기서 함수자체를 종료를 시켜야하나
+                
+                # ma5 ma20 밑으로 떨어졌는데 아직 rsi70이 안되있으면 5일선이 20일선 밑으로 떨어지자마자 팔고 
+                # 그 후에 다시 rsi30을 노린다.
 
+                # 5분봉을 가져온다.
+                df_5 = pyupbit.get_ohlcv(ticker, interval="minute5")
+                ma5_2 = GetMA(df_5, 5, -2)
+                ma5_3 = GetMA(df_5, 5, -3)
+                ma20_2 = GetMA(df_5, 20, -2)
+                
+                if  ma5_3 > ma5_2 and ma20_2 <= ma5_3 and ma20_2 > ma5_2: 
+                    print("여기서 매도를 통해 기회를 더 늘린다.")
+                    print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
+                    time.sleep(0.5)
 
                 # rsi7이 70이상이면 매도를 진행한다.######################################
-                NowCoinTotalMoney = GetCoinNowMoney(balances,ticker)
-                print("매수된 코인 중 현재 내 코인 평가 금액 :::", NowCoinTotalMoney)   
-
-                #할당된 최대코인매수금액 대비 매수된 코인 비율
-                Total_Rate = NowCoinTotalMoney / CoinMaxMoney * 100.0
-                print("할당된 최대코인매수금액 대비 매수된 코인 비율  :::", Total_Rate)
-
-                #분봉을 가져온다.
-                df_5 = pyupbit.get_ohlcv(ticker, interval="minute5")
                 rsi7_1 = GetRSI(df_5, 7, -2)
                 print(ticker , ", rsi7_1 :", rsi7_1)
 
@@ -319,17 +324,6 @@ if booleanFor == True:
                 if rsi7_1>= 70.0:
                     print("바로 전 rsi7이 70이상 매도 진행 ::::", upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                     break
-
-                    #할당된 최대코인매수금액 대비 매수된 코인 비중이 50%이하일때..
-                    # if Total_Rate <= 50.0:
-                    #     time.sleep(0.05)
-                    #     print(upbit.buy_market_order(ticker,WaterEnterMoeny))
-                    #50%를 초과하면
-                    # else:
-                        #수익율이 마이너스 5% 이하 일때만 매수를 진행하여 원금 소진을 늦춘다.
-                        # if revenu_rate <= -5.0:
-                        #     time.sleep(0.05)
-                        #     print(upbit.buy_market_order(ticker,WaterEnterMoeny))
 
             else:
                 print("-----------------------------------현재 매수된 코인이 없을 경우---------------------------------------------------------------------")
