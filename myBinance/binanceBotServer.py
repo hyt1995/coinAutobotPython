@@ -2,6 +2,7 @@
 from tokenize import Number
 import ccxt
 import time
+import datetime
 import pandas as pd
 import pprint
 import my_key
@@ -209,65 +210,62 @@ def ExistOrderSide(binance,Ticker,Side):
 
 
 
-
-
 #15분을 기준으로 한 캔들 정보 가져온다
-df15 = GetOhlcv(binanceCon,TargetCoinTicker, '15m')
-
+df5 = GetOhlcv(binanceCon,TargetCoinTicker, '5m')
+print(df5)
 
 #최근 5일선 3개를 가지고 와서 변수에 넣어준다.
-ma5Before3 = GetMA(df15, 5, -3)
-ma5Before2 = GetMA(df15, 5, -2)
-ma5 = GetMA(df15, 5, -1)
+ma3Before3 = GetMA(df5, 3, -3)
+ma3Before2 = GetMA(df5, 3, -2)
+ma3 = GetMA(df5, 3, -1)
 
 #20일선을 가지고 와서 변수에 넣어준다.
-ma20Before3 = GetMA(df15, 20, -4)
-ma20Before2 = GetMA(df15, 20, -3)
-ma20 = GetMA(df15, 20, -2)
+ma10Before3 = GetMA(df5, 10, -3)
+ma10Before2 = GetMA(df5, 10, -2)
+ma10 = GetMA(df5, 10, -1)
 
 #RSI7 정보를 가지고 온다.
-rsi7 = GetRSI(df15, 7, -1)
+rsi7 = GetRSI(df5, 7, -1)
 # 바로 전 rsi7의 정보를 가져온다
-rsi7Before = GetRSI(df15, 7, -2)
+rsi7Before = GetRSI(df5, 7, -2)
+
+rsi7Before3 = GetRSI(df5, 7, -3)
 
 
-#RSI14 정보를 가지고 온다.
-rsi14 = GetRSI(df15, 14, -1)
-# 바로 전 rsi14의 정보를 가지고 온다.
-rsi14Before= GetRSI(df15, 14, -2)
+# #RSI14 정보를 가지고 온다.
+# rsi14 = GetRSI(df5, 14, -1)
+# # 바로 전 rsi14의 정보를 가지고 온다.
+# rsi14Before= GetRSI(df5, 14, -2)
 
-#RSI24 정보를 가지고 온다.
-rsi24 = GetRSI(df15, 24, -1)
-# 바로 전 rsi14의 정보를 가지고 온다.
-rsi24Before = GetRSI(df15, 24, -2)
+# rsi14Before3= GetRSI(df5, 14, -3)
+
+# #RSI24 정보를 가지고 온다.
+# rsi24 = GetRSI(df5, 24, -1)
+# # 바로 전 rsi14의 정보를 가지고 온다.
+# rsi24Before = GetRSI(df5, 24, -2)
+# rsi24Before3 = GetRSI(df5, 24, -3)
 
 
 
 #최근 3분의 종가 데이터
 #최근 3개의 종가 데이터
-print("Price: ",df15['close'][-3], "->",df15['close'][-2], "->",df15['close'][-1] )
+print("Price: ",df5['close'][-3], "->",df5['close'][-2], "->",df5['close'][-1] )
 
-#최근 3개의 5일선 데이터
-print("5ma: ",ma5Before3, "->",ma5Before2, "->",ma5)
+#최근 3개의 3일선 데이터
+print("3ma: ",ma3Before3, "->",ma3Before2, "->",ma3)
 
-#최근 3개의 20일선 데이터
-print("20ma: ",ma20Before3, "->",ma20Before2, "->",ma20)
+#최근 3개의 10일선 데이터
+print("10ma: ",ma10Before3, "->",ma10Before2, "->",ma10)
 
 
 #최근 3개의 RSI7 데이터
-print("RSI7: ", rsi7)
-#바로 전  RSI7 데이터
-print("RSI7-1: ", rsi7Before)
+print("RSI7: ", rsi7, "--->", rsi7Before,"--->",rsi7Before3)
 
-#최근 3개의 RSI14 데이터
-print("RSI14: ", rsi14)
-#바로 전   RSI14 데이터
-print("RSI14-1: ", rsi14Before)
+# #최근 3개의 RSI14 데이터
+# print("RSI14: ", rsi14, "--->", rsi14Before,"--->", rsi14Before3)
 
-#최근 3개의 RSI24 데이터
-print("RSI24: ", rsi24)
-#바로 전   RSI24 데이터
-print("RSI24-1: ", rsi24Before)
+# #최근 3개의 RSI24 데이터
+# print("RSI24: ", rsi24, "--->", rsi24Before,"--->", rsi24Before3)
 
 #선물 잔고 데이타 가져오기 
 balance = binanceCon.fetch_balance(params={"type": "future"})
@@ -276,8 +274,6 @@ time.sleep(0.1)
 print(balance['USDT'])
 print("현재 내 총 자산:",float(balance['USDT']['total']))
 print("코인을 사고 남은 잔액을 뜻한다.:",float(balance['USDT']['free']))
-# 나중에 시드머니가 올라가고 나면 한번 특정 수량을 사고 남은 돈 balance['USDT']['free']로 다시 특정 수량을 산다.
-
 
 ##레버리지를 건드는것은 사이트에서 정해서 건들기###############################################################################################################
 # 혹시 모르니 일단 
@@ -397,12 +393,12 @@ if amt == 0:
     print("---------------------------------기존 주문없이 매수 진행---------------------------------")
 
     # 20일선 밑에서 매수를 진행
-    if ma5 < ma20:
-        print("20일선 밑에서 처음 롱을 잡기 위한")
+    if ma3Before2 < ma10Before2:
+        print("10일선 밑에서 처음 롱을 잡기 위한")
 
-        # 현재 5일선이 더 크고 rsi7이 가장 크고 rsi14가 40보다 작을때(과매도 구간), 바로 전 20일보다 5일선이 작을 때
-        if ma5Before2 < ma5 and rsi7 > rsi14 and rsi14 <= 40 and ma5 < ma20:
-            print("20일선 밑에서 5일선이 위로 꺾이고 rsi7가 rsi14보다 클때 롱을 잡는다. rsi가 상승세로 가는것도 변경?")
+        # 3일선이 10일선 밑에 있고 rsi7이 30밑이였다가 rsi7Before rsi가 위로 꺽이는 순간 매매 
+        if rsi7Before3<= 30 and rsi7Before3 < rsi7Before:
+            print("3일선이 10일선 밑에 있고 rsi7이 30 밑이였다가 위로 꺾일때 매수")
 
             #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
@@ -412,42 +408,15 @@ if amt == 0:
 
             SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
 
-    elif ma5 > ma20:
-        print("20일선 위에서 처음 숏을 잡기 위한")
-
-        if  ma5Before3 < ma5Before2 and ma5Before2 > ma5 and rsi14 >= 40: # 40보다 rsi가 작아야하나 커야 하나...
-            print("20일선 위에서 5일선이 아래로 꺾이고 rsi7이 rsi14보다 작을때 숏을 잡는다.")
-
-            #주문 취소후
-            binanceCon.cancel_all_orders(TargetCoinTicker)
-            time.sleep(0.1)
-
-            print("숏 잡기",binanceCon.create_market_sell_order(TargetCoinTicker, firstAmount))
-
-            #스탑 로스 설정을 건다.
-            SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
-
 ##############################기존에 매수한 금액이있을 경우
 else:
 
-    if ma5 > ma20:
-        print("20일선 위에서 현재 코인을 팔기 위한")
+    if ma3Before2 > ma10Before2:
+        print("3일선이 10일선 위에서 코인을 팔기 위한")
 
 
-        if rsi14 >= 55 and rsi7 > rsi14 and rsi14 > rsi24 and ma5 >  ma5Before2 and  rsi7< rsi7Before and rsi14 < rsi14Before and rsi24 < rsi24Before:
-            print("rsi14가 55보다 크고 rsi7이 가장 크고 ma5가 전에보다 크고 rsi가 모두 하락세일때 코인을 매도한다.")
-
-            #주문 취소후
-            binanceCon.cancel_all_orders(TargetCoinTicker)
-            time.sleep(0.1)
-
-            #시장가 숏 포지션 잡기 - 매도가 곧 숏 포지션 잡는 것
-            print("매도 진행",binanceCon.create_market_sell_order(TargetCoinTicker, absAmt))
-        
-
-        # 위에서 조건에 부합하지않아 팔지를 않을 경우 여기서 코인을 매도한다.
-        if ma5Before3 < ma5Before2 and ma5Before2 > ma5 and rsi14 >= 40.0:
-            print("20일선 위에서 5일선이 아래로 꺾였을때 rsi14가 40보다 같거나 크면 판다")
+        if rsi7Before >= 70:
+            print("3일선이 10일선 위에서 rsi7이 70이상이면 매도 ")
 
             #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
@@ -456,64 +425,18 @@ else:
             #시장가 숏 포지션 잡기 - 매도가 곧 숏 포지션 잡는 것
             print("매도 진행",binanceCon.create_market_sell_order(TargetCoinTicker, absAmt))
 
-    elif ma5 < ma20:
-        print("20일선 밑에서 현재 코인을 팔기 위한")
 
-        if ma5Before3 > ma5Before2 and ma5Before2 > ma5 and rsi14 <= 40.0:
-            # 파는건 좋은데 너무 빨리 팔아서 수익이 안나온다. 
-            # 대부분 20일선 밑으로 내려가자마자 바로 판다.
-            print("20일선 밑에서 5일선이 위로 꺾이고 rsi14가 40보다 작을때 판다")
-
-            #주문 취소후
-            binanceCon.cancel_all_orders(TargetCoinTicker)
-            time.sleep(0.1)
-
-            #시장가 롱포지션으로 기존 코인 처분
-            print("매도 진행 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt))
-
-        if ma5Before3 > ma5Before2 and ma5Before2 < ma5 and rsi7> rsi14:
-
-            print("20일선 밑에서 5일선이 위로 꺾였을때 rsi7이 rsi14보다 크면 매도 + 롱포지션")
-
-            #주문 취소후
-            binanceCon.cancel_all_orders(TargetCoinTicker)
-            time.sleep(0.1)
-
-            #시장가 롱포지션으로 기존 코인 처분
-            print("매도 진행 + 롱포지션 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt + firstAmount ))
-
-            SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
-
-
-
-
-
-
-    # 팔지않고 20일선으로 교차될때 발생
-    if ma5Before3 >= ma20 and ma5Before2 < ma20: # 5일선이 위에 있다 20일선 아래로 겹칠 때
+    # 현재 포지션이 롱인데 3일선이 10일선 밑으로 떨어질경우 매도 
+    if ma3Before3 > ma3Before2 and ma3Before3 >= ma10Before2 and ma3Before2 < ma10Before2: # 5일선이 위에 있다 20일선 아래로 겹칠 때
         if amt > 0:
 
-            print("포지션이 롱인 상태에서 20일선 밑으로 갈때")
+            print("포지션이 롱인 상태에서 10일선 밑으로 갈때")
 
              #주문 취소후
             binanceCon.cancel_all_orders(TargetCoinTicker)
             time.sleep(0.1)
 
             print("롱에서 숏 잡기",binanceCon.create_market_sell_order(TargetCoinTicker, absAmt))
-
-            SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
-
-
-    elif ma20Before3 <= ma20 and ma5Before2 > ma20:
-        if amt < 0:
-
-            print("포지션이 숏인데 20일선 위로 갈때")
-
-            #주문 취소후
-            binanceCon.cancel_all_orders(TargetCoinTicker)
-            time.sleep(0.1)
-
-            print("숏에서 롱잡기 : ",binanceCon.create_market_buy_order(TargetCoinTicker, absAmt))
 
             SetStopLoss(binanceCon,TargetCoinTicker,StopLossRate)
 
