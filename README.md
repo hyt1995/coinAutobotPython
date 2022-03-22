@@ -31,3 +31,11 @@ ssh -i "botServerKey001.pem" ec2-user@ec2-54-226-206-18.compute-1.amazonaws.com
 
 
 각 봇에 대한 설명
+
+
+
+
+
+
+
+/home/ec2-user/server/coinAutobotPython/myUpbit/upbitbot.py
