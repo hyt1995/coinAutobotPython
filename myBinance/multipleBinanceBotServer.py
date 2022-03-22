@@ -385,6 +385,7 @@ if runfuncBoolean == True:
                 print("매수 진행",binanceCon.create_market_buy_order(cd["TargetCoinTicker"], firstAmount))
 
                 SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
+                time.sleep(0.1)
 
         ##############################기존에 매수한 금액이있을 경우
         else: 
@@ -400,12 +401,13 @@ if runfuncBoolean == True:
 
                     #시장가 숏 포지션 잡기 - 매도가 곧 숏 포지션 잡는 것
                     print("매도 진행",binanceCon.create_market_sell_order(cd["TargetCoinTicker"], absAmt))
+                    time.sleep(0.1)
 
 
 
             # 현재 포지션이 롱인데 3일선이 10일선 밑으로 떨어질경우 매도 
             if ma3Before3 > ma3Before2 and ma3Before3 >= ma10Before2 and ma3Before2 < ma10Before2: # 5일선이 위에 있다 20일선 아래로 겹칠 때
-                if amt > 0:
+                if absAmt > 0:
 
                     print("포지션이 롱인 상태에서 10일선 밑으로 갈때")
 
@@ -416,8 +418,9 @@ if runfuncBoolean == True:
                     print("롱에서 숏 잡기",binanceCon.create_market_sell_order(cd["TargetCoinTicker"], absAmt))
 
                     SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
+                    time.sleep(0.1)
 
-        if amt != 0: #포지션이 있을때만 스탑로스를 건다
+        if absAmt != 0: #포지션이 있을때만 스탑로스를 건다
             SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
 
             time.sleep(0.2)

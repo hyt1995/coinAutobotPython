@@ -37,5 +37,5 @@ ssh -i "botServerKey001.pem" ec2-user@ec2-54-226-206-18.compute-1.amazonaws.com
 
 
 
-
+/home/ec2-user/server/coinAutobotPython/myBinance/multipleBinanceBotServer.py
 /home/ec2-user/server/coinAutobotPython/myUpbit/upbitbot.py
