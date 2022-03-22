@@ -35,14 +35,14 @@ simpleEnDecrypt = SimpleEnDecrypt(b'ycJNAQPaDHt8iGpVJ1756CQ3O9ML_OBa0xdguOKsEs0=
 
 
 # 실서버에서 돌린는 것을 위한
-upbit_access = "gAAAAABiL2ilxtwCCCwO5SEOkaVR6sK9pyApfNwMDk7CwBj0Xb2Yb3aYz501yG8m4Cgk5WeafK7JuVVwaG_918FOho7IPqyJJjrc9fY9KauonMqIc-50sOlNh5WBH1Ct5zb5cNFp5g32"          # 이미 변경한 값이다.
-upbit_secret = "gAAAAABiLc0bewyKFyCyi_Qj0OsQmKCzkt29Tb0MB-C7apAvk4coK8L1bs0dZgcubTScQ6TyKXH8I56_NwKUhiFyAmtTB4yu6RJuxf3voeeRUoALOrJz8nE1lAKcFYVMxQ0W4_ioqxJa"          # 이미 변경한 값이다.
+# upbit_access = "gAAAAABiL2ilxtwCCCwO5SEOkaVR6sK9pyApfNwMDk7CwBj0Xb2Yb3aYz501yG8m4Cgk5WeafK7JuVVwaG_918FOho7IPqyJJjrc9fY9KauonMqIc-50sOlNh5WBH1Ct5zb5cNFp5g32"          # 이미 변경한 값이다.
+# upbit_secret = "gAAAAABiLc0bewyKFyCyi_Qj0OsQmKCzkt29Tb0MB-C7apAvk4coK8L1bs0dZgcubTScQ6TyKXH8I56_NwKUhiFyAmtTB4yu6RJuxf3voeeRUoALOrJz8nE1lAKcFYVMxQ0W4_ioqxJa"          # 이미 변경한 값이다.
 
 
 
 # 로컬에서 돌리는 것을 위한
-# local_upbit_access = "gAAAAABiNNZ-8rlezwF0l8CFusxpLKuiTURIRg9E_uNSTR02S1w244g4M4r-8jKRizQaDoWzFNCbjwa8ONxVDBqc1VEYVB_7oywXftCkwMud1Cwl8DDXDrrwTAyOH70bUmYcamnmYv9V"          # 이미 변경한 값이다.
-# local_upbit_secret = "gAAAAABiNNZ-VruqwcKDz68nCMdb3xPJk7MfOvoBMMmgN9Bs09jq-I9eMOYg4j05i9sXzOO25_SdZMXS1ypFbIKL94AwNEYuuwDdJ6fQ_VLvQYnlBbUTmoq45NAbCYmnBVJsg7W-gdWM"          # 이미 변경한 값이다.
+local_upbit_access = "gAAAAABiNNZ-8rlezwF0l8CFusxpLKuiTURIRg9E_uNSTR02S1w244g4M4r-8jKRizQaDoWzFNCbjwa8ONxVDBqc1VEYVB_7oywXftCkwMud1Cwl8DDXDrrwTAyOH70bUmYcamnmYv9V"          # 이미 변경한 값이다.
+local_upbit_secret = "gAAAAABiNNZ-VruqwcKDz68nCMdb3xPJk7MfOvoBMMmgN9Bs09jq-I9eMOYg4j05i9sXzOO25_SdZMXS1ypFbIKL94AwNEYuuwDdJ6fQ_VLvQYnlBbUTmoq45NAbCYmnBVJsg7W-gdWM"          # 이미 변경한 값이다.
 
 
 # print("업비트 엑섹스 : ", simpleEnDecrypt.encrypt(upbitAccessKey))

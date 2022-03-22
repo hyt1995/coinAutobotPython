@@ -35,24 +35,6 @@ TargetCoinSymbol = "BTCUSDT"
 
 
 
-#시장가 taker 0.04, 지정가 maker 0.02
-
-#시장가 숏 포지션 잡기 
-#print(binance.create_market_sell_order(Target_Coin_Ticker, 0.002))
-
-#시장가 롱 포지션 잡기 
-#print(binance.create_market_buy_order(Target_Coin_Ticker, 0.001))
-
-
-#지정가 숏 포지션 잡기 
-#print(binance.create_limit_sell_order(Target_Coin_Ticker, abs_amt, entryPrice))
-
-#지정가 롱 포지션 잡기 
-#print(binance.create_limit_buy_order(Target_Coin_Ticker, abs_amt, btc_price))
-
-
-
-
 #rsi 지표 가져오는 함수
 #RSI지표 수치를 구해준다. 첫번째: 분봉/일봉 정보, 두번째: 기간, 세번째: 기준 날짜
 def GetRSI(ohlcv,period,st):
@@ -230,21 +212,6 @@ rsi7 = GetRSI(df5, 7, -1)
 rsi7Before = GetRSI(df5, 7, -2)
 
 rsi7Before3 = GetRSI(df5, 7, -3)
-
-
-# #RSI14 정보를 가지고 온다.
-# rsi14 = GetRSI(df5, 14, -1)
-# # 바로 전 rsi14의 정보를 가지고 온다.
-# rsi14Before= GetRSI(df5, 14, -2)
-
-# rsi14Before3= GetRSI(df5, 14, -3)
-
-# #RSI24 정보를 가지고 온다.
-# rsi24 = GetRSI(df5, 24, -1)
-# # 바로 전 rsi14의 정보를 가지고 온다.
-# rsi24Before = GetRSI(df5, 24, -2)
-# rsi24Before3 = GetRSI(df5, 24, -3)
-
 
 
 #최근 3분의 종가 데이터

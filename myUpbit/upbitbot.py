@@ -1,4 +1,3 @@
-from audioop import reverse
 import time
 import pyupbit
 import pandas as pd
@@ -196,13 +195,13 @@ simpleEnDecrypt = my_key.SimpleEnDecrypt(ende_key.ende_key)
 
 #### 실서버 운영을 위한
 #암호화된 액세스키와 시크릿키를 읽어 복호화 한다.
-Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.upbit_access)
-Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.upbit_secret)
+# Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.upbit_access)
+# Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.upbit_secret)
 
 ######로컬에서 테스트를 위한
 #암호화된 액세스키와 시크릿키를 읽어 복호화 한다.
-# Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.local_upbit_access)
-# Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.local_upbit_secret)
+Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.local_upbit_access)
+Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.local_upbit_secret)
 
 # 업비트 객체 생성
 upbit = pyupbit.Upbit(Upbit_AccessKey, Upbit_ScretKey)
@@ -220,6 +219,11 @@ upbit = pyupbit.Upbit(Upbit_AccessKey, Upbit_ScretKey)
 #만약 나는 내가 원하는 코인만 지정해서 사고 싶다면 여기에 코인 티커를 넣고 아래 for문에서 LovelyCoinList를 활용하시면 되요!
 # 비트코인 , 이더리움, 비트코인 캐시, 에이브
 LovelyCoinList = ['KRW-BTC','KRW-ETH']
+# 이더리움클래식 추가한다.
+
+
+
+
 
 # 내가 가진 잔고 데이터 가져오기
 balances = upbit.get_balances()
@@ -229,7 +233,7 @@ balances = upbit.get_balances()
 # TopCoinList = GetTopCoinList("day",5)
 
 #내가 매수할 총 코인 개수
-MaxCoinCnt = 2
+MaxCoinCnt = 3
 
 #처음 매수할 비중(퍼센트) 
 FirstRate = 100.0
@@ -263,7 +267,7 @@ print ("FirstEnterMoney : ", FirstEnterMoney)
 print ("WaterEnterMoeny : ", WaterEnterMoeny)
 print ("지정 매도가를 위한 1% 금액 : ", selectSale)
 
-TopCoinList = GetTopCoinList("day",5)
+TopCoinList = GetTopCoinList("day",15)
 
 booleanFor = True
 
@@ -272,6 +276,7 @@ if booleanFor == True:
     #이 두개는 항상 추가하고 돌린다. - 그나마 정상적인 기회가 많다.
     TopCoinList.append("KRW-BTC")
     TopCoinList.append("KRW-ETH")
+    TopCoinList.append("KRW-ETC")
 
     print("매수/매도 돌릴 코인 리스트 ::::::: ", TopCoinList)
 
@@ -298,25 +303,22 @@ if booleanFor == True:
                             print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                             time.sleep(0.5)
 
-                            #스탑로스 끝나고 여기서 바로 매수 하면 똑같은 손실만 일어날뿐 여기서 함수자체를 종료를 시켜야하나
-                
-                # ma5 ma20 밑으로 떨어졌는데 아직 rsi70이 안되있으면 5일선이 20일선 밑으로 떨어지자마자 팔고 
-                # 그 후에 다시 rsi30을 노린다.
+
+
 
                 # 5분봉을 가져온다.
                 df_5 = pyupbit.get_ohlcv(ticker, interval="minute5")
-                ma5_2 = GetMA(df_5, 5, -2)
-                ma5_3 = GetMA(df_5, 5, -3)
-                ma20_2 = GetMA(df_5, 20, -2)
+                ma3_2 = GetMA(df_5, 3, -2)
+                ma3_3 = GetMA(df_5, 3, -3)
+                ma10_2 = GetMA(df_5, 10, -2)
                 
-                if  ma5_3 > ma5_2 and ma20_2 <= ma5_3 and ma20_2 > ma5_2: 
+                if  ma3_3 > ma3_2 and ma3_3 >= ma10_2  and ma10_2 > ma3_2: 
                     print("여기서 매도를 통해 기회를 더 늘린다.")
                     print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                     time.sleep(0.5)
 
                 # rsi7이 70이상이면 매도를 진행한다.######################################
                 rsi7_1 = GetRSI(df_5, 7, -2)
-                print(ticker , ", rsi7_1 :", rsi7_1)
 
 
                 #5분봉 기준 RSI지표 70이상일때 매도
@@ -330,9 +332,9 @@ if booleanFor == True:
                 #분봉을 가져온다.
                 df5 = pyupbit.get_ohlcv(ticker, interval="minute5")
                 rsi7_1 = GetRSI(df5, 7, -2)
-                print(ticker , ", rsi7 :", rsi7_1)
+                rsi7_2 = GetRSI(df5, 7, -3)
                 
-                if rsi7_1 <= 30:
+                if rsi7_2 <= 30 and rsi7_2 < rsi7_1:
                     
                     print(upbit.buy_market_order(ticker,FirstEnterMoney))
                     print("현재 rsi지수가 30보다 같거나 작을때 코인 :", ticker, "매수",FirstEnterMoney,"가격으로 매수")
@@ -345,3 +347,6 @@ if booleanFor == True:
         #예외 즉 에러가 발생하면 여기서 프린트 해줍니다.
         except Exception as e:
             print("error:", e)
+
+
+print("마지막에 매수함? ::: ", upbit.get_balances())
