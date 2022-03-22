@@ -195,13 +195,13 @@ simpleEnDecrypt = my_key.SimpleEnDecrypt(ende_key.ende_key)
 
 #### 실서버 운영을 위한
 #암호화된 액세스키와 시크릿키를 읽어 복호화 한다.
-# Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.upbit_access)
-# Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.upbit_secret)
+Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.upbit_access)
+Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.upbit_secret)
 
 ######로컬에서 테스트를 위한
 #암호화된 액세스키와 시크릿키를 읽어 복호화 한다.
-Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.local_upbit_access)
-Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.local_upbit_secret)
+# Upbit_AccessKey = simpleEnDecrypt.decrypt(my_key.local_upbit_access)
+# Upbit_ScretKey = simpleEnDecrypt.decrypt(my_key.local_upbit_secret)
 
 # 업비트 객체 생성
 upbit = pyupbit.Upbit(Upbit_AccessKey, Upbit_ScretKey)

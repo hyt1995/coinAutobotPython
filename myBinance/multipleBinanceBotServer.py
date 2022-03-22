@@ -208,10 +208,6 @@ multipleTargetCoin = [
         "TargetCoinTicker" : "ETC/USDT",
         "TargetCoinSymbol" : "ETCUSDT"
     },
-    {  ##### 웨이브
-        "TargetCoinTicker" : "WAVES/USDT",
-        "TargetCoinSymbol" : "WAVESUSDT"
-    },
     {  ##### 샌드박스
         "TargetCoinTicker" : "SAND/USDT",
         "TargetCoinSymbol" : "SANDUSDT"
