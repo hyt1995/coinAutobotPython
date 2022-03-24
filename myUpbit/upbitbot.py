@@ -318,12 +318,13 @@ if booleanFor == True:
                     time.sleep(0.5)
 
                 # rsi7이 70이상이면 매도를 진행한다.######################################
-                rsi7_1 = GetRSI(df_5, 7, -2)
+                rsi14_1 = GetRSI(df_5, 14, -2)
+                print("##############",ticker,"현재 rsi14 :::: ", rsi14_1)
 
 
                 #5분봉 기준 RSI지표 70이상일때 매도
                 # if rsi14_2 >= 70 and rsi14_2 > rsi14_1 :
-                if rsi7_1>= 70.0:
+                if rsi14_1>= 70.0:
                     print("바로 전 rsi7이 70이상 매도 진행 ::::", upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                     break
 
@@ -331,10 +332,12 @@ if booleanFor == True:
                 print("-----------------------------------현재 매수된 코인이 없을 경우---------------------------------------------------------------------")
                 #분봉을 가져온다.
                 df5 = pyupbit.get_ohlcv(ticker, interval="minute5")
-                rsi7_1 = GetRSI(df5, 7, -2)
-                rsi7_2 = GetRSI(df5, 7, -3)
+                rsi14_1 = GetRSI(df5, 14, -2)
+                rsi14_2 = GetRSI(df5, 14, -3)
+
+                print("#####################33",ticker,"rsi14 _1 :::", rsi14_1,"rsi14_2 ::::", rsi14_2)
                 
-                if rsi7_2 <= 30 and rsi7_2 < rsi7_1:
+                if rsi14_2 <= 30 and rsi14_2 < rsi14_1:
                     
                     print(upbit.buy_market_order(ticker,FirstEnterMoney))
                     print("현재 rsi지수가 30보다 같거나 작을때 코인 :", ticker, "매수",FirstEnterMoney,"가격으로 매수")

@@ -32,6 +32,12 @@ ssh -i "botServerKey001.pem" ec2-user@ec2-54-226-206-18.compute-1.amazonaws.com
 
 각 봇에 대한 설명
 
+*/5 * * * * python3 /home/ec2-user/server/coinAutobotPython/myBinance/multipleBinanceBotServer.py
+
+/home/ec2-user/server/coinAutobotPython/myBinance
+
+*/5 0-05 * * * python3 /home/ec2-user/server/coinAutobotPython/myUpbit/upbitbot.py
+*/5 10-23 * * * python3 /home/ec2-user/server/coinAutobotPython/myUpbit/upbitbot.py
 
 
 

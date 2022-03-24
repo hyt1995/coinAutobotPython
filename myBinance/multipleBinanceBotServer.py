@@ -275,7 +275,7 @@ if runfuncBoolean == True:
         print("leverage:",leverage)
         print("unrealizedProfit:",unrealizedProfit)
 
-        #해당 코인 가격을 가져온다.
+        # 해당 코인 가격을 가져온다.
         coinPrice = GetCoinNowPrice(binanceCon, cd["TargetCoinTicker"])
 
         #레버리지에 따른 최대 매수 가능 수량

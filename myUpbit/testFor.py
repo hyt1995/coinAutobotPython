@@ -1,16 +1,30 @@
-[
-    {'currency': 'KRW', 'balance': '0.79822206', 'locked': '0.0', 'avg_buy_price': '0', 'avg_buy_price_modified': True, 'unit_currency': 'KRW'}, 
-    {'currency': 'BTC', 'balance': '0.00019676', 'locked': '0.0', 'avg_buy_price': '50094000', 'avg_buy_price_modified': False, 'unit_currency': 'KRW'}, 
-    {'currency': 'APENFT', 'balance': '0.00000052', 'locked': '0.0', 'avg_buy_price': '0', 'avg_buy_price_modified': False, 'unit_currency': 'KRW'}
-]
+import requests
+
+
+# data = {
+#     "name" : "korpc",
+#     "password" : "Korpcdream21!"
+# }
+
+# response = requests.post("http://localhost:5001/coinServer/userInfo/account",json=data)
+
+
+data = {
+    "storeName" : "upbit",
+}
+
+response = requests.post("http://localhost:5001/coinServer/userInfo/getStore",json=data)
+
+
+# data = {
+#     "storeName" : "binance",
+# }
+
+# response = requests.post("http://localhost:5001/coinServer/userInfo/getUserInfo",json=data)
 
 
 
 
 
 
-
-
-
-
-
+print("접속 후 결과값을 확인을 위해 ::::::", response)
