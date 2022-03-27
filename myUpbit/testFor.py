@@ -9,11 +9,11 @@ import requests
 # response = requests.post("http://localhost:5001/coinServer/userInfo/account",json=data)
 
 
-data = {
-    "storeName" : "upbit",
-}
+# data = {
+#     "storeName" : "upbit",
+# }
 
-response = requests.post("http://localhost:5001/coinServer/userInfo/getStore",json=data)
+# response = requests.post("http://localhost:5001/coinServer/userInfo/getStore",json=data)
 
 
 # data = {
@@ -22,6 +22,17 @@ response = requests.post("http://localhost:5001/coinServer/userInfo/getStore",js
 
 # response = requests.post("http://localhost:5001/coinServer/userInfo/getUserInfo",json=data)
 
+
+
+
+data = {
+    "secretKey" : "secretKey",
+    "accessKey" : "accessKey",
+    "remainCoin" : 108,
+    "storeId" : 2,
+}
+
+response = requests.post("http://localhost:5001/coinServer/store/infoSave",json=data)
 
 
 

@@ -233,7 +233,7 @@ balances = upbit.get_balances()
 # TopCoinList = GetTopCoinList("day",5)
 
 #내가 매수할 총 코인 개수
-MaxCoinCnt = 3
+MaxCoinCnt = 2
 
 #처음 매수할 비중(퍼센트) 
 FirstRate = 100.0
@@ -267,16 +267,19 @@ print ("FirstEnterMoney : ", FirstEnterMoney)
 print ("WaterEnterMoeny : ", WaterEnterMoeny)
 print ("지정 매도가를 위한 1% 금액 : ", selectSale)
 
-TopCoinList = GetTopCoinList("day",15)
+# TopCoinList = GetTopCoinList("day",15)
 
 booleanFor = True
 
 if booleanFor == True:
 
     #이 두개는 항상 추가하고 돌린다. - 그나마 정상적인 기회가 많다.
-    TopCoinList.append("KRW-BTC")
-    TopCoinList.append("KRW-ETH")
-    TopCoinList.append("KRW-ETC")
+    TopCoinList = dict()
+    TopCoinList.append("KRW-BTC") #  비트코인
+    # TopCoinList.append("KRW-ETH")
+    TopCoinList.append("KRW-ETC") # 이더리움 클래식
+    TopCoinList.append("KRW-LTC") # 라이트 코인
+    TopCoinList.append("KRW-BSV") # 비트코인 에스브이
 
     print("매수/매도 돌릴 코인 리스트 ::::::: ", TopCoinList)
 
@@ -295,22 +298,22 @@ if booleanFor == True:
                     
                     if ticker == value['unit_currency'] + "-" + value['currency']:
 
-                        print("내가 매입한 코인가격에서 -1%밑으로 떨어지면 매도 하고 다시 기회를 노린다. !!!!!!!!!!!!!!!!!")
-                        if pyupbit.get_current_price(ticker) <= float(value["avg_buy_price"])*0.99:
+                        print("내가 매입한 코인가격에서 -5%밑으로 떨어지면 매도 하고 다시 기회를 노린다. !!!!!!!!!!!!!!!!!")
+                        if pyupbit.get_current_price(ticker) <= float(value["avg_buy_price"])*0.95:
 
                             revenu_rate = GetRevenueRate(balances, ticker)
                             print("현재 내 수익율 가져오기 :::: ", revenu_rate)
-                            print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
+                            print("5% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                             time.sleep(0.5)
 
 
 
 
                 # 5분봉을 가져온다.
-                df_5 = pyupbit.get_ohlcv(ticker, interval="minute5")
-                ma3_2 = GetMA(df_5, 3, -2)
-                ma3_3 = GetMA(df_5, 3, -3)
-                ma10_2 = GetMA(df_5, 10, -2)
+                df_15 = pyupbit.get_ohlcv(ticker, interval="minute15")
+                ma3_2 = GetMA(df_15, 3, -2)
+                ma3_3 = GetMA(df_15, 3, -3)
+                ma10_2 = GetMA(df_15, 10, -2)
                 
                 if  ma3_3 > ma3_2 and ma3_3 >= ma10_2  and ma10_2 > ma3_2: 
                     print("여기서 매도를 통해 기회를 더 늘린다.")
@@ -318,26 +321,27 @@ if booleanFor == True:
                     time.sleep(0.5)
 
                 # rsi7이 70이상이면 매도를 진행한다.######################################
-                rsi14_1 = GetRSI(df_5, 14, -2)
-                print("##############",ticker,"현재 rsi14 :::: ", rsi14_1)
+                rsi7_1 = GetRSI(df_15, 7, -2)
+                rsi7_2 = GetRSI(df_15, 7, -3)
+                print("##############",ticker,"현재 rsi14 :::: ", rsi7_1,"-->",rsi7_2)
 
 
                 #5분봉 기준 RSI지표 70이상일때 매도
                 # if rsi14_2 >= 70 and rsi14_2 > rsi14_1 :
-                if rsi14_1>= 70.0:
+                if rsi7_2>= 70.0 and rsi7_2 > rsi7_1:
                     print("바로 전 rsi7이 70이상 매도 진행 ::::", upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
                     break
 
             else:
                 print("-----------------------------------현재 매수된 코인이 없을 경우---------------------------------------------------------------------")
                 #분봉을 가져온다.
-                df5 = pyupbit.get_ohlcv(ticker, interval="minute5")
-                rsi14_1 = GetRSI(df5, 14, -2)
-                rsi14_2 = GetRSI(df5, 14, -3)
+                df_15 = pyupbit.get_ohlcv(ticker, interval="minute15")
+                rsi7_1 = GetRSI(df_15, 7, -2)
+                rsi7_2 = GetRSI(df_15, 7, -3)
 
-                print("#####################33",ticker,"rsi14 _1 :::", rsi14_1,"rsi14_2 ::::", rsi14_2)
+                print("#####################33",ticker,"rsi14 _1 :::", rsi7_1,"rsi14_2 ::::", rsi7_2)
                 
-                if rsi14_2 <= 30 and rsi14_2 < rsi14_1:
+                if rsi7_2 <= 30 and rsi7_2 < rsi7_1:
                     
                     print(upbit.buy_market_order(ticker,FirstEnterMoney))
                     print("현재 rsi지수가 30보다 같거나 작을때 코인 :", ticker, "매수",FirstEnterMoney,"가격으로 매수")
@@ -353,3 +357,12 @@ if booleanFor == True:
 
 
 print("마지막에 매수함? ::: ", upbit.get_balances())
+
+
+
+
+# 수정할 전략
+# 1. 이더리움 클래식에서 rsi14가 한번에 70을 넘지 않고 67이상에서 한번 밑으로 꺾였을 경우 판매
+
+
+# 비트코인은 그냥 67이면 팔기로 하는게 나을듯
