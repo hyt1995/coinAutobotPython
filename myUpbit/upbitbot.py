@@ -274,7 +274,7 @@ booleanFor = True
 if booleanFor == True:
 
     #이 두개는 항상 추가하고 돌린다. - 그나마 정상적인 기회가 많다.
-    TopCoinList = dict()
+    TopCoinList = list()
     TopCoinList.append("KRW-BTC") #  비트코인
     # TopCoinList.append("KRW-ETH")
     TopCoinList.append("KRW-ETC") # 이더리움 클래식

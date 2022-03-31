@@ -25,14 +25,24 @@ import requests
 
 
 
+# data = {
+#     "secretKey" : "UpsecretKey",
+#     "accessKey" : "BiaccessKey",
+#     "remainCoin" : 108,
+#     "storeId" : 3,
+# }
+
+# response = requests.post("http://localhost:5001/coinServer/store/infoSave",json=data)
+
+
 data = {
-    "secretKey" : "secretKey",
-    "accessKey" : "accessKey",
+    "secretKey" : "UpsecretKey",
+    "accessKey" : "BiaccessKey",
     "remainCoin" : 108,
-    "storeId" : 2,
+    "storeId" : 3,
 }
 
-response = requests.post("http://localhost:5001/coinServer/store/infoSave",json=data)
+response = requests.post("http://localhost:5001/coinServer/store/getStoreInfo",json=data)
 
 
 
