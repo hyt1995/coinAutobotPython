@@ -315,10 +315,10 @@ if booleanFor == True:
                 ma3_3 = GetMA(df_15, 3, -3)
                 ma10_2 = GetMA(df_15, 10, -2)
                 
-                if  ma3_3 > ma3_2 and ma3_3 >= ma10_2  and ma10_2 > ma3_2: 
-                    print("여기서 매도를 통해 기회를 더 늘린다.")
-                    print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
-                    time.sleep(0.5)
+                # if  ma3_3 > ma3_2 and ma3_3 >= ma10_2  and ma10_2 > ma3_2: 
+                #     print("여기서 매도를 통해 기회를 더 늘린다.")
+                #     print("1% 보다 떨어져 매도 :::",upbit.sell_market_order(ticker,upbit.get_balance(ticker)))
+                #     time.sleep(0.5)
 
                 # rsi7이 70이상이면 매도를 진행한다.######################################
                 rsi7_1 = GetRSI(df_15, 7, -2)

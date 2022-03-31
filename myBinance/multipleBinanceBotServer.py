@@ -335,7 +335,7 @@ if runfuncBoolean == True:
 
         #스탑로스 비율을 설정합니다. 0.5면 50% 0.1이면 10%입니다.
         #이 것도 물타기 비율 처럼 매수 비중에 따라 조절할 수도 있겠죠?
-        StopLossRate = 0.02
+        StopLossRate = 0.03
 
         #15분을 기준으로 한 캔들 정보 가져온다
         df5 = GetOhlcv(binanceCon,cd["TargetCoinTicker"], '5m')
@@ -406,19 +406,19 @@ if runfuncBoolean == True:
 
 
             # 현재 포지션이 롱인데 3일선이 10일선 밑으로 떨어질경우 매도 
-            if ma3Before3 > ma3Before2 and ma3Before3 >= ma10Before2 and ma3Before2 < ma10Before2: # 5일선이 위에 있다 20일선 아래로 겹칠 때
-                if absAmt > 0:
+            # if ma3Before3 > ma3Before2 and ma3Before3 >= ma10Before2 and ma3Before2 < ma10Before2: # 5일선이 위에 있다 20일선 아래로 겹칠 때
+            #     if absAmt > 0:
 
-                    print("포지션이 롱인 상태에서 10일선 밑으로 갈때")
+            #         print("포지션이 롱인 상태에서 10일선 밑으로 갈때")
 
-                    #주문 취소후
-                    binanceCon.cancel_all_orders(cd["TargetCoinTicker"])
-                    time.sleep(0.1)
+            #         #주문 취소후
+            #         binanceCon.cancel_all_orders(cd["TargetCoinTicker"])
+            #         time.sleep(0.1)
 
-                    print("롱에서 숏 잡기",binanceCon.create_market_sell_order(cd["TargetCoinTicker"], absAmt))
+            #         print("롱에서 숏 잡기",binanceCon.create_market_sell_order(cd["TargetCoinTicker"], absAmt))
 
-                    SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
-                    time.sleep(0.1)
+            #         SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
+            #         time.sleep(0.1)
 
         if absAmt != 0: #포지션이 있을때만 스탑로스를 건다
             SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
