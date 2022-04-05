@@ -280,6 +280,7 @@ if booleanFor == True:
     TopCoinList.append("KRW-ETC") # 이더리움 클래식
     TopCoinList.append("KRW-LTC") # 라이트 코인
     TopCoinList.append("KRW-BSV") # 비트코인 에스브이
+    TopCoinList.append("KRW-BCH") # 비트코인캐쉬
 
     print("매수/매도 돌릴 코인 리스트 ::::::: ", TopCoinList)
 

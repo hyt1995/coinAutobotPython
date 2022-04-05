@@ -199,27 +199,27 @@ multipleTargetCoin = [
     {  ##### 비트코인
         "TargetCoinTicker" : "BTC/USDT",
         "TargetCoinSymbol" : "BTCUSDT"
-    },
-    {  ##### 이더리움
-        "TargetCoinTicker" : "ETH/USDT",
-        "TargetCoinSymbol" : "ETHUSDT"
-    },
-    {  ##### 이더리움 클래식
-        "TargetCoinTicker" : "ETC/USDT",
-        "TargetCoinSymbol" : "ETCUSDT"
-    },
-    {  ##### 샌드박스
-        "TargetCoinTicker" : "SAND/USDT",
-        "TargetCoinSymbol" : "SANDUSDT"
-    },
-    { ### 니어프로토콜
-        "TargetCoinTicker" : "NEAR/USDT",
-        "TargetCoinSymbol" : "NEARUSDT"
-    },
-    { ### 아발란체
-        "TargetCoinTicker" : "AVAX/USDT",
-        "TargetCoinSymbol" : "AVAXUSDT"
     }
+    # {  ##### 이더리움
+    #     "TargetCoinTicker" : "ETH/USDT",
+    #     "TargetCoinSymbol" : "ETHUSDT"
+    # },
+    # {  ##### 이더리움 클래식
+    #     "TargetCoinTicker" : "ETC/USDT",
+    #     "TargetCoinSymbol" : "ETCUSDT"
+    # },
+    # {  ##### 샌드박스
+    #     "TargetCoinTicker" : "SAND/USDT",
+    #     "TargetCoinSymbol" : "SANDUSDT"
+    # },
+    # { ### 니어프로토콜
+    #     "TargetCoinTicker" : "NEAR/USDT",
+    #     "TargetCoinSymbol" : "NEARUSDT"
+    # },
+    # { ### 아발란체
+    #     "TargetCoinTicker" : "AVAX/USDT",
+    #     "TargetCoinSymbol" : "AVAXUSDT"
+    # }
 ]
 
 # #선물 잔고 데이타 가져오기 
@@ -338,27 +338,29 @@ if runfuncBoolean == True:
         StopLossRate = 0.03
 
         #15분을 기준으로 한 캔들 정보 가져온다
-        df5 = GetOhlcv(binanceCon,cd["TargetCoinTicker"], '5m')
+        df15 = GetOhlcv(binanceCon,cd["TargetCoinTicker"], '15m')
+
+        print("볼륨확인을 위한 ::::", df15)
 
         #최근 5일선 3개를 가지고 와서 변수에 넣어준다.
-        ma3Before3 = GetMA(df5, 3, -3)
-        ma3Before2 = GetMA(df5, 3, -2)
-        ma3 = GetMA(df5, 3, -1)
+        ma3Before3 = GetMA(df15, 3, -3)
+        ma3Before2 = GetMA(df15, 3, -2)
+        ma3 = GetMA(df15, 3, -1)
 
         #20일선을 가지고 와서 변수에 넣어준다.
-        ma10Before3 = GetMA(df5, 10, -3)
-        ma10Before2 = GetMA(df5, 10, -2)
-        ma10 = GetMA(df5, 10, -1)
+        ma10Before3 = GetMA(df15, 10, -3)
+        ma10Before2 = GetMA(df15, 10, -2)
+        ma10 = GetMA(df15, 10, -1)
 
         #RSI7 정보를 가지고 온다.
-        rsi7 = GetRSI(df5, 7, -1)
+        rsi7 = GetRSI(df15, 7, -1)
         # 바로 전 rsi7의 정보를 가져온다
-        rsi7Before = GetRSI(df5, 7, -2)
+        rsi7Before = GetRSI(df15, 7, -2)
 
-        rsi7Before3 = GetRSI(df5, 7, -3)
+        rsi7Before3 = GetRSI(df15, 7, -3)
 
         #최근 3개의 종가 데이터
-        print("Price: ",df5['close'][-3], "->",df5['close'][-2], "->",df5['close'][-1] )
+        print("Price: ",df15['close'][-3], "->",df15['close'][-2], "->",df15['close'][-1] )
 
         #최근 3개의 3일선 데이터
         print("3ma: ",ma3Before3, "->",ma3Before2, "->",ma3)
@@ -382,7 +384,7 @@ if runfuncBoolean == True:
                 binanceCon.cancel_all_orders(cd["TargetCoinTicker"])
                 time.sleep(0.1)
 
-                print("매수 진행",binanceCon.create_market_buy_order(cd["TargetCoinTicker"], firstAmount))
+                # print("매수 진행",binanceCon.create_market_buy_order(cd["TargetCoinTicker"], firstAmount))
 
                 SetStopLoss(binanceCon,cd["TargetCoinTicker"],StopLossRate)
                 time.sleep(0.1)
@@ -436,3 +438,7 @@ if runfuncBoolean == True:
 
 # 3.소유한 코인이 없을시 3분의1 로 코인 매수, 그 후부터는 잔액으로 2분의1씩 코인을 매수한다. 하나로보다는 여러개로 평균으로 수익을 조진다.(적어도 하루에 10%는 만들어야한다.)
 # 4. 바이낸스의 꽃 상승에서 숏을 잡아야하는데 어떻게 잡아야 할런지
+
+
+# 가장 중요한 하락장 파악해서 피하거나 숏잡기
+# 거래량이 빨간색으로 15k를 넘어갈경우 rsi가 30이하로 떨어져도 롱을 잡지 않는다.
